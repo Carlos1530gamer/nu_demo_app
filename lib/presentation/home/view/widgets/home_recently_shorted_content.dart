@@ -23,11 +23,8 @@ class HomeRecentlyShortedContent extends StatelessWidget {
             ),
           ),
         ),
-        Padding(
-          padding: EdgeInsets.only(top: 12),
-          child: SingleChildScrollView(
-            child: HomeRecentlyShortedList(),
-          ),
+        SingleChildScrollView(
+          child: HomeRecentlyShortedList(),
         ),
       ],
     );
