@@ -30,7 +30,7 @@ class HomeStateNotifier extends StateNotifier<HomeViewModelState> {
 
 final homeViewModelState =
     StateNotifierProvider.autoDispose<HomeStateNotifier, HomeViewModelState>(
-  (ref) => throw UnimplementedError(),
+  (ref) => HomeStateNotifier(ref),
 );
 
 final homeViewModel = Provider.autoDispose<HomeStateNotifier>(

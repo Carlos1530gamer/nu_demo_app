@@ -6,9 +6,9 @@ import 'package:http/http.dart';
 import '../enviroment.dart';
 
 abstract class BaseNetworking {
-  BaseNetworking();
+  BaseNetworking({required Client client}) : _client = client;
 
-  Client get _client => Client();
+  final Client _client;
 
   final Map<String, String> defaultHeaders = {
     'Content-Type': 'application/json',
@@ -21,8 +21,10 @@ abstract class BaseNetworking {
       Map<String, String>? aditionalHeaders,
       Map<String, dynamic>? body}) async {
     final uri = Uri.https(Enviroment.baseURL, path);
-    final Response response;
+
     defaultHeaders.addAll(aditionalHeaders ?? {});
+
+    final Response response;
 
     switch (type) {
       case RequestType.get:
@@ -39,7 +41,9 @@ abstract class BaseNetworking {
         );
     }
 
-    return json.decode(response.body);
+    return response.statusCode <= 200
+        ? json.decode(response.body)
+        : Future.error(Exception('bad request'));
   }
 }
 

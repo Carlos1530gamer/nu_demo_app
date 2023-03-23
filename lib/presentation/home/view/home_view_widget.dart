@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'widgets/home_recently_shorted_content.dart';
 import 'widgets/home_short_component.dart';
 
-class HomeView extends StatelessWidget {
-  const HomeView({super.key});
+class HomeViewWidget extends StatelessWidget {
+  const HomeViewWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
