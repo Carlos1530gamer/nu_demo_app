@@ -5,7 +5,7 @@ import '../../entities/url_shortened_response.dart';
 import '../definitions/url_shortened_repository.dart';
 
 class UrlShortenedRepositoryImp extends UrlShortenedRepository {
-  UrlShortenedRepositoryImp() : super(client: Client());
+  UrlShortenedRepositoryImp({required Client client}) : super(client: client);
 
   @override
   Future<UrlShortenedResponse> short({required String url}) async {

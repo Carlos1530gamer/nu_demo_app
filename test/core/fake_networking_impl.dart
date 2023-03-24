@@ -9,5 +9,8 @@ class FakeNetworkingImpl extends BaseNetworking {
       await execute(type: RequestType.get, path: '/');
 
   Future<Map<String, dynamic>> makePost() async => await execute(
-      type: RequestType.post, path: '/', body: {'fakeBody': 'fakeBody'});
+        type: RequestType.post,
+        path: '/',
+        body: {'fakeBody': 'fakeBody'},
+      );
 }

@@ -14,7 +14,7 @@ class HomeStateNotifier extends StateNotifier<HomeViewModelState> {
     );
   }
 
-  void shortenerUrl() async {
+  Future<void> shortenerUrl() async {
     final useCase = ref.read(shortenerUrlUseCaseProvider);
     final response = await useCase.execute(url: state.inputUrl);
     final shortedLinks = [

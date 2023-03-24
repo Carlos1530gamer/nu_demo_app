@@ -2,40 +2,27 @@ import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart';
-import 'package:mockito/annotations.dart';
-import 'package:mockito/mockito.dart';
-import 'package:nu_demo_app/core/enviroment.dart';
-
-@GenerateNiceMocks([MockSpec<Client>()])
-import 'base_networking_test.mocks.dart';
+import 'package:http/testing.dart';
 import 'fake_networking_impl.dart';
 
 void main() {
   group("Base Networking Test's", () {
-    MockClient mockClient = MockClient();
-    FakeNetworkingImpl fakeNetworking = FakeNetworkingImpl(mockClient);
+    FakeNetworkingImpl fakeNetworking = FakeNetworkingImpl(Client());
 
     final sucesssResponse = Response('{"result": "success"}', 200);
     final decodedSuccess = {'result': 'success'};
-    final defaultHeaders = {'Content-Type': 'application/json'};
 
-    setUp(() {
-      mockClient = MockClient();
+    void setupHttpStub(Future<Response> Function(Request) fn) {
+      final mockClient = MockClient(fn);
       fakeNetworking = FakeNetworkingImpl(mockClient);
-    });
+    }
 
     test('test when use a get request', () async {
-      when(
-        mockClient.get(
-          Uri.https(
-            Enviroment.baseURL,
-            '/',
-          ),
-          headers: defaultHeaders,
-        ),
-      ).thenAnswer(
-        (realInvocation) async => sucesssResponse,
-      );
+      setupHttpStub((request) async {
+        expect(request.method, 'GET');
+
+        return sucesssResponse;
+      });
 
       expect(
         await fakeNetworking.makeGet(),
@@ -44,14 +31,12 @@ void main() {
     });
 
     test('test when use a post request', () async {
-      when(mockClient.post(
-        Uri.https(
-          Enviroment.baseURL,
-          '/',
-        ),
-        headers: defaultHeaders,
-        body: jsonEncode({'fakeBody': 'fakeBody'}),
-      )).thenAnswer((realInvocation) async => sucesssResponse);
+      setupHttpStub((request) async {
+        expect(request.method, 'POST');
+        expect(request.body, jsonEncode({'fakeBody': 'fakeBody'}));
+
+        return sucesssResponse;
+      });
 
       expect(
         await fakeNetworking.makePost(),
@@ -60,17 +45,9 @@ void main() {
     });
 
     test('test when the client reponde unknow error', () async {
-      when(
-        mockClient.get(
-          Uri.https(
-            Enviroment.baseURL,
-            '/',
-          ),
-          headers: defaultHeaders,
-        ),
-      ).thenAnswer(
-        (realInvocation) async => Response('response', 4004),
-      );
+      setupHttpStub((request) async {
+        return Response('response', 400);
+      });
 
       expect(fakeNetworking.makeGet(), throwsA(isA<Exception>()));
     });
