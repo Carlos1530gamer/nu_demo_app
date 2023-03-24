@@ -18,7 +18,7 @@ class HomeShortComponent extends HookConsumerWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Expanded(
-            child: TextFormField(
+            child: TextField(
               onChanged: viewModel.updateInputLink,
               decoration: InputDecoration(
                 contentPadding: const EdgeInsets.all(15),
