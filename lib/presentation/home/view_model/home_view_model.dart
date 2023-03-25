@@ -1,41 +1,43 @@
+import 'package:flutter/foundation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../../domain/providers/shortener_url_use_case_providers.dart';
 import 'state/home_view_model_state.dart';
 
-class HomeStateNotifier extends StateNotifier<HomeViewModelState> {
-  HomeStateNotifier(this.ref) : super(HomeViewModelState());
+class HomeStateNotifier extends ChangeNotifier {
+  HomeStateNotifier(this.ref) : super();
 
   final Ref ref;
+  HomeViewModelState viewState = HomeViewModelState();
 
   void updateInputLink(String link) {
-    state = state.copyWith(
+    viewState = viewState.copyWith(
       inputUrl: link,
     );
   }
 
   Future<void> shortenerUrl() async {
     final useCase = ref.read(shortenerUrlUseCaseProvider);
-    final response = await useCase.execute(url: state.inputUrl);
+    final response = await useCase.execute(url: viewState.inputUrl);
     final shortedLinks = [
       response.shortedLinkModel,
-      ...state.recentlyShortenedLinks,
+      ...viewState.recentlyShortenedLinks,
     ];
 
-    state = state.copyWith(
+    viewState = viewState.copyWith(
       recentlyShortenedLinks: shortedLinks,
     );
+    notifyListeners();
   }
 }
 
-final homeViewModelState =
-    StateNotifierProvider.autoDispose<HomeStateNotifier, HomeViewModelState>(
+final homeViewModel = ChangeNotifierProvider.autoDispose<HomeStateNotifier>(
   (ref) => HomeStateNotifier(ref),
 );
 
-final homeViewModel = Provider.autoDispose<HomeStateNotifier>(
-  (ref) => ref.watch(homeViewModelState.notifier),
+final homeViewModelState = Provider.autoDispose<HomeViewModelState>(
+  (ref) => ref.watch(homeViewModel).viewState,
   dependencies: [
-    homeViewModelState,
+    homeViewModel,
   ],
 );
